@@ -253,16 +253,42 @@
             <!-- <a class="upi_pay_now" id="upi_pay_now" href="upi://pay?pa=<%=UpiId%>&amp;cu=INR&amp;am=<%=Amount%>"> Pay
                 Now With App!</a> -->
         </but>
-<div style="text-align: center; margin-bottom: 10px;">
-    <p><strong style="color: red;">⬇ Wajib diisi untuk memproses deposit! ⬇</strong></p>
+        <div style="text-align: center; margin-bottom: 10px;">
+    <p><strong style="color: red;">⬇ WAJIB DIISI UNTUK MEMPROSES DEPOSIT ⬇</strong></p>
     <p>Masukkan nomor referensi transaksi (UTR) yang Anda dapatkan setelah transfer. Bisa berupa 
-    <strong style="color: black;">nomor rekening, e-wallet, atau UTR dari bank</strong> yang digunakan.</p>
+        <strong style="color: black;">nomor rekening, e-wallet, atau UTR dari bank</strong> yang digunakan.
+    </p>
 </div>
-        <form class="verification_form__root" action="submit.php" method="post">
-            <label for="upi_ref_no">UPI Ref. No.</label>
-            <input type="text" id="upi_ref_no" name="upi_ref_no" required placeholder="Enter Your UTR here..." />
-            <button id="submit_button" type="submit">Submit</button>
-        </form>
+
+<form class="verification_form__root" action="/src/api/submit.php" method="post">
+    <label for="upi_ref_no">Nomor Referensi UPI</label>
+    <input type="text" id="upi_ref_no" name="upi_ref_no" required placeholder="Masukkan kode UTR Anda di sini..." />
+    <button id="submit_button" type="submit">Konfirmasi Pembayaran (1x Klik)</button>
+</form>
+
+<div style="text-align: center; margin: 20px 0;">
+    <p><strong style="color: red;">⬇ DEPOSIT RP 20.000 - RP 100.000 AKAN DIALIHKAN OTOMATIS ⬇</strong></p>
+    <p><strong style="color: black;">Setelah klik tombol konfirmasi, sistem akan memproses dan mengarahkan secara otomatis.</strong></p>
+
+    <p><strong style="color: red;">⬇ JIKA DEPOSIT DI ATAS RP 100.001, WAJIB KLIK TOMBOL DI BAWAH INI ⬇</strong></p>
+    <p><strong style="color: black;">Untuk nominal besar, proses tetap berjalan namun Anda perlu cek manual.</strong></p>
+
+    <p><strong style="color: red;">⬇ KLIK UNTUK CEK RIWAYAT DEPOSIT ⬇</strong></p>
+</div>
+
+<button onclick="window.location.href='https://winbig.shop/wallet/rechargerecord'" style="
+  padding: 10px 20px;
+  background-color: #dc2626;
+  color: white;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  font-weight: bold;
+">
+  Lihat Riwayat Deposit
+</button>
+
+
 
         <div class="tutorial_root">
     <h3 class="tutorial_title">Cara Scan QR dengan Bank atau E-Wallet</h3>
@@ -410,39 +436,36 @@
 
 
                 $.ajax({
-                    type: "POST",
-                    url: "/api/webapi/recharge",
-                    data: {
-                        money: amount,
-                        type: "rspay",
-                        upiRefNo:upiRefNo
-                    },
-                    dataType: "json",
-                    success: function (response) {
-                        let data = response.datas;
-                        console.log(response);
-                        
-                        if (!response.status) {
-                            alertMess(response.message, $(this), 5000);
-                            $("#create-bank").removeClass('block-click');
-                            return
-                        }else{
-                             window.location.href = "/wallet/rechargerecord"
-                        }
+    type: "POST",
+    url: "/api/webapi/recharge",
+    data: {
+        money: amount,
+        type: "rspay",
+        upiRefNo: upiRefNo
+    },
+    dataType: "json",
+    success: function (response) {
+        let data = response.datas;
+        console.log(response);
 
-                        $('.Loading').fadeIn(0);
-                        setTimeout(() => {
-                            $('.Loading').fadeOut(0);
-                            location.reload();
-                            // setTimeout(() => {
-                            //     location.href = data.url;
-                            // }, 100);
-                        }, 1500);
-                    }
-                });
+        if (!response.status) {
+            alertMess(response.message, $(this), 5000);
+            $("#create-bank").removeClass('block-click');
+            return;
+        } else {
+            window.location.href = "/wallet/rechargerecord"; // Redirect ke halaman rechargerecord
+        }
+
+        $('.Loading').fadeIn(0);
+        setTimeout(() => {
+            $('.Loading').fadeOut(0);
+            location.reload();
+        }, 1500);
+    }
+});
             } catch (error) {
                 console.log(error);
-                alertMessage("Something went Wrong!")
+                alertMessage("Ada yang Salah!")
             }
         }
     );
